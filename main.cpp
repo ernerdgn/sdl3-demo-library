@@ -8,7 +8,7 @@ SDL_Window* gWindow = NULL;
 
 SDL_Surface* gScreenSurface = NULL;
 
-SDL_Surface* gHelloWorld = NULL;
+SDL_Surface* gImageMedia = NULL;  //image to load
 
 bool init()
 {
@@ -40,8 +40,8 @@ bool loadMedia()
 {
 	bool success = true;
 
-	gHelloWorld = SDL_LoadBMP("PATH/TO/BMP.bmp");  //PATH/TO/BMP.bmp
-	if (gHelloWorld == NULL)
+	gImageMedia = SDL_LoadBMP("PATH/TO/BMP.bmp");  //PATH/TO/BMP.bmp
+	if (gImageMedia == NULL)
 	{
 		SDL_Log("Image loading is failed %s. SDL_ERROR: %s\n", "PATH/TO/BMP.bmp", SDL_GetError());
 		success = false;
@@ -52,8 +52,8 @@ bool loadMedia()
 
 void close()
 {
-	SDL_DestroySurface(gHelloWorld);
-	gHelloWorld = NULL;
+	SDL_DestroySurface(gImageMedia);
+	gImageMedia = NULL;
 
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
@@ -75,11 +75,19 @@ int main(int argc, char* args[])
 		}
 		else
 		{
-			SDL_BlitSurface(gHelloWorld, NULL, gScreenSurface, NULL);
+			bool quit = false;  //main loop flag
+			SDL_Event e;
 
+			while (!quit)
+			{
+				while (SDL_PollEvent(&e) != 0)
+				{
+					if (e.type == SDL_EVENT_QUIT) quit = true;
+				}
+			}
+
+			SDL_BlitSurface(gImageMedia, NULL, gScreenSurface, NULL);
 			SDL_UpdateWindowSurface(gWindow);
-
-			SDL_Event e; bool quit = false; while (quit == false) { while (SDL_PollEvent(&e)) { if (e.type == SDL_EVENT_QUIT) quit = true; } }
 		}
 	}
 
